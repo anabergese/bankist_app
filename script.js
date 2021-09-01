@@ -62,6 +62,8 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 const displayMovements = function(movements) {
+  containerMovements.innerHTML = '';
+
   movements.forEach(function(mov, i){
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
@@ -71,7 +73,7 @@ const displayMovements = function(movements) {
         <div class="movements__value">${mov}</div>
       </div>
     `;
-    containerMovements.insertAdjacentHTML('afterbegin', html)
+    containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
 displayMovements(account1.movements);
@@ -88,3 +90,23 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+const calDisplayBalance = function(movements) {
+  const balance = movements.reduce((acc, cur) =>
+    acc + cur, 0);
+  labelBalance.textContent = `${balance} EUR`;
+}
+calDisplayBalance(account1.movements);
+
+const createUsernnames = function (accs) {
+  accs.forEach(function(acc){
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+    }
+  );
+}
+createUsernnames(accounts);
+console.log(accounts);
+
