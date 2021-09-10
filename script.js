@@ -89,10 +89,10 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
-const calDisplayBalance = function(movements) {
-  const balance = movements.reduce((acc, cur) =>
-    acc + cur, 0);
-  labelBalance.textContent = `${balance}€`;
+const calDisplayBalance = function(acc) {
+  acc.balance = acc.movements.reduce((acc, mov) =>
+    acc + mov, 0);
+  labelBalance.textContent = `${acc.balance}€`;
 }
 
 const createUsernames = function (accs) {
@@ -107,6 +107,12 @@ const createUsernames = function (accs) {
 }
 
 createUsernames(accounts);
+
+const updateUI = function(acc) {
+    displayMovements(acc.movements);
+    calDisplayBalance(acc);
+    calDisplaySummary(acc);
+}
 
 const calDisplaySummary = function (acc) {
   const incomes = acc.movements
@@ -142,14 +148,30 @@ btnLogin.addEventListener('click', function(e){
 
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
-
-    displayMovements(currentAccount.movements);
-    calDisplayBalance(currentAccount.movements);
-    calDisplaySummary(currentAccount);
+    updateUI(currentAccount);
   }
 });
 
 
+// Creating Transfer Money function
+btnTransfer.addEventListener('click', function(e) {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find( acc => acc.username === inputTransferTo.value);
+
+  inputTransferAmount.value = inputTransferTo.value = '';
+  if (
+    amount > 0 &&
+    receiverAcc &&
+    currentAccount.balance >= amount &&
+    receiverAcc?.username !== currentAccount.username
+  ) {
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+    updateUI(currentAccount);
+  }
+
+});
 
 
 
